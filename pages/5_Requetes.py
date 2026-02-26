@@ -186,11 +186,11 @@ st.subheader("Requête 8 — Jointure : Options choisies par location")
 col1, col2 = st.columns(2)
 with col1:
     st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_location,\ nom}(Location\_Option \bowtie_{id\_option} Option)")
+    st.latex(r"\pi_{id\_location,\ nom}(Location \bowtie_{id\_option} Option)")
 with col2:
-    sql8 = """SELECT LO.id_location, O.nom AS option_choisie
-FROM Location_Option LO
-JOIN Option O ON LO.id_option = O.id_option;"""
+    sql8 = """SELECT L.id_location, O.nom AS option_choisie
+FROM Location L
+JOIN Option O ON L.id_option = O.id_option;"""
     st.markdown("**SQL :**")
     st.code(sql8, language="sql")
 

@@ -19,7 +19,7 @@ pour une **agence de location de voitures**.
 
 **Contexte métier :** Une entreprise de location de véhicules possède plusieurs 
 agences réparties dans différentes villes. Elle souhaite gérer sa flotte de voitures, 
-ses clients, les locations avec options, les avis clients et la facturation.
+ses clients, les locations avec option, les avis clients et la facturation.
 """)
 
 st.markdown("---")

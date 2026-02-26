@@ -79,7 +79,7 @@ if os.path.exists(DB_PATH):
 
     tables = [
         "Agences", "Utilisateurs", "Voitures", "Option",
-        "Location", "Avis", "Facture", "Location_Option"
+        "Location", "Avis", "Facture"
     ]
 
     for table in tables:

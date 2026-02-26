@@ -21,13 +21,13 @@ st.markdown("""
 > classées par catégorie (SUV, Berline, Citadine, Utilitaire).
 >
 > Les **clients** (utilisateurs) peuvent louer des véhicules pour une durée déterminée, 
-> ajouter des **options** à leur location (GPS, assurance, siège bébé...), 
+> ajouter une **option** à leur location (GPS, assurance, siège bébé...), 
 > laisser des **avis** sur les véhicules utilisés et recevoir une **facture** 
 > pour chaque location.
 
 **Besoins identifiés :**
 - Gérer les informations des agences et de leur flotte de véhicules
-- Permettre aux clients de louer des voitures avec des options supplémentaires
+- Permettre aux clients de louer des voitures avec une option supplémentaire
 - Collecter les avis clients sur les véhicules loués
 - Générer et suivre les factures de location
 - Effectuer des statistiques (chiffre d'affaires par agence, notes moyennes, etc.)
@@ -167,11 +167,10 @@ st.markdown("""
 | **Rédige** | UTILISATEURS | 0,n | AVIS | 1,1 | Un utilisateur peut rédiger plusieurs avis |
 | **Évalue** | VOITURES | 0,n | AVIS | 1,1 | Une voiture peut recevoir plusieurs avis |
 | **Génère** | LOCATION | 1,1 | FACTURE | 0,1 | Une location génère au plus une facture |
-| **Inclut** | LOCATION | 0,n | OPTION | 0,n | Relation N:M → table associative |
+| **Inclut** | LOCATION | 0,1 | OPTION | 0,n | Une location peut inclure une option |
 """)
 
-st.info("""💡 L'association **Inclut** entre LOCATION et OPTION est de type **N:M** 
-(plusieurs à plusieurs). Elle génère une table associative `Location_Option` dans le MLD.""")
+st.info("""💡 Une location peut inclure **au plus une option**. Une option peut être utilisée par plusieurs locations.""")
 
 st.markdown("---")
 
@@ -180,33 +179,8 @@ st.markdown("---")
 # ================================================================
 st.header("Schéma Entité-Association")
 
-st.markdown("""
-```
-    ┌──────────────┐                    ┌──────────────┐
-    │   AGENCES    │───── possède ─────▶│   VOITURES   │
-    └──────────────┘      (1,n)-(1,1)   └──────┬───────┘
-                                               │
-                          ┌────── concerne ─────┘ (0,n)-(1,1)
-                          │
-                          ▼          (0,n)-(0,n)
-    ┌──────────────┐  ┌──────────────┐──── inclut ────▶┌──────────────┐
-    │ UTILISATEURS │  │   LOCATION   │                 │    OPTION    │
-    └──────┬───────┘  └──────┬───────┘                 └──────────────┘
-           │                 │
-           │  effectue       │  génère
-           │  (0,n)-(1,1)    │  (1,1)-(0,1)
-           │                 │
-           ▼                 ▼
-    ┌──────────────┐  ┌──────────────┐
-    │     AVIS     │  │   FACTURE    │
-    └──────────────┘  └──────────────┘
-
-    UTILISATEURS ──── rédige ────▶ AVIS       (0,n)-(1,1)
-    VOITURES     ──── évalue ────▶ AVIS       (0,n)-(1,1)
-    UTILISATEURS ──── effectue ──▶ LOCATION   (0,n)-(1,1)
-```
-""")
+st.image("pages/content/Schema_EA.png", caption="Schéma Entité-Association")
 
 st.markdown("---")
 
-st.success("✅ Le MCD identifie **7 entités** et **7 associations**. Le passage au MLD produira **8 tables** (7 entités + 1 table associative `Location_Option` pour la relation N:M).")
+st.success("✅ Le MCD identifie **7 entités** et **7 associations**. Le passage au MLD produira **7 tables**.")

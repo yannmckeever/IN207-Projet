@@ -45,11 +45,13 @@ CREATE TABLE IF NOT EXISTS Location (
     id_location INTEGER PRIMARY KEY,
     id_utilisateur INTEGER NOT NULL,
     id_voiture INTEGER NOT NULL,
+    id_option INTEGER,
     date_debut DATE NOT NULL,
     date_fin DATE NOT NULL,
     statut TEXT DEFAULT 'en_cours',
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur),
-    FOREIGN KEY (id_voiture) REFERENCES Voitures(id_voiture)
+    FOREIGN KEY (id_voiture) REFERENCES Voitures(id_voiture),
+    FOREIGN KEY (id_option) REFERENCES Option(id_option)
 );
 
 CREATE TABLE IF NOT EXISTS Avis (
@@ -70,14 +72,6 @@ CREATE TABLE IF NOT EXISTS Facture (
     date_facture DATE,
     statut_paiement TEXT DEFAULT 'en_attente',
     FOREIGN KEY (id_location) REFERENCES Location(id_location)
-);
-
-CREATE TABLE IF NOT EXISTS Location_Option (
-    id_location INTEGER NOT NULL,
-    id_option INTEGER NOT NULL,
-    PRIMARY KEY (id_location, id_option),
-    FOREIGN KEY (id_location) REFERENCES Location(id_location),
-    FOREIGN KEY (id_option) REFERENCES Option(id_option)
 );
 
 -- ================================================================
@@ -115,22 +109,22 @@ INSERT INTO Option VALUES (4, 'Conducteur additionnel', 'Ajout d''un conducteur 
 INSERT INTO Option VALUES (5, 'WiFi embarqué', 'Connexion internet dans le véhicule', 7.00);
 
 -- Locations
-INSERT INTO Location VALUES (1, 1, 1, '2025-01-10', '2025-01-15', 'terminee');
-INSERT INTO Location VALUES (2, 1, 4, '2025-02-01', '2025-02-05', 'terminee');
-INSERT INTO Location VALUES (3, 1, 5, '2025-03-10', '2025-03-14', 'terminee');
-INSERT INTO Location VALUES (4, 1, 7, '2025-04-01', '2025-04-03', 'terminee');
-INSERT INTO Location VALUES (5, 1, 2, '2025-05-15', '2025-05-18', 'terminee');
-INSERT INTO Location VALUES (6, 2, 3, '2025-01-20', '2025-01-25', 'terminee');
-INSERT INTO Location VALUES (7, 2, 6, '2025-03-05', '2025-03-08', 'terminee');
-INSERT INTO Location VALUES (8, 3, 2, '2025-02-10', '2025-02-14', 'terminee');
-INSERT INTO Location VALUES (9, 3, 5, '2025-04-20', '2025-04-25', 'en_cours');
-INSERT INTO Location VALUES (10, 4, 1, '2025-01-05', '2025-01-08', 'terminee');
-INSERT INTO Location VALUES (11, 4, 2, '2025-02-15', '2025-02-20', 'terminee');
-INSERT INTO Location VALUES (12, 4, 3, '2025-03-01', '2025-03-05', 'terminee');
-INSERT INTO Location VALUES (13, 4, 4, '2025-04-10', '2025-04-15', 'terminee');
-INSERT INTO Location VALUES (14, 4, 6, '2025-05-01', '2025-05-05', 'terminee');
-INSERT INTO Location VALUES (15, 5, 8, '2025-02-20', '2025-02-22', 'terminee');
-INSERT INTO Location VALUES (16, 6, 7, '2025-03-15', '2025-03-20', 'annulee');
+INSERT INTO Location VALUES (1, 1, 1, 1, '2025-01-10', '2025-01-15', 'terminee');
+INSERT INTO Location VALUES (2, 1, 4, 1, '2025-02-01', '2025-02-05', 'terminee');
+INSERT INTO Location VALUES (3, 1, 5, 3, '2025-03-10', '2025-03-14', 'terminee');
+INSERT INTO Location VALUES (4, 1, 7, 1, '2025-04-01', '2025-04-03', 'terminee');
+INSERT INTO Location VALUES (5, 1, 2, NULL, '2025-05-15', '2025-05-18', 'terminee');
+INSERT INTO Location VALUES (6, 2, 3, 1, '2025-01-20', '2025-01-25', 'terminee');
+INSERT INTO Location VALUES (7, 2, 6, NULL, '2025-03-05', '2025-03-08', 'terminee');
+INSERT INTO Location VALUES (8, 3, 2, NULL, '2025-02-10', '2025-02-14', 'terminee');
+INSERT INTO Location VALUES (9, 3, 5, 5, '2025-04-20', '2025-04-25', 'en_cours');
+INSERT INTO Location VALUES (10, 4, 1, 3, '2025-01-05', '2025-01-08', 'terminee');
+INSERT INTO Location VALUES (11, 4, 2, NULL, '2025-02-15', '2025-02-20', 'terminee');
+INSERT INTO Location VALUES (12, 4, 3, 1, '2025-03-01', '2025-03-05', 'terminee');
+INSERT INTO Location VALUES (13, 4, 4, 2, '2025-04-10', '2025-04-15', 'terminee');
+INSERT INTO Location VALUES (14, 4, 6, NULL, '2025-05-01', '2025-05-05', 'terminee');
+INSERT INTO Location VALUES (15, 5, 8, 1, '2025-02-20', '2025-02-22', 'terminee');
+INSERT INTO Location VALUES (16, 6, 7, NULL, '2025-03-15', '2025-03-20', 'annulee');
 
 -- Avis
 INSERT INTO Avis VALUES (1, 1, 1, 5, 'Excellent SUV, très confortable', '2025-01-16');
@@ -162,18 +156,3 @@ INSERT INTO Facture VALUES (14, 14, 180.00, '2025-05-05', 'en_attente');
 INSERT INTO Facture VALUES (15, 15, 70.00, '2025-02-22', 'payee');
 INSERT INTO Facture VALUES (16, 16, 0.00, '2025-03-20', 'annulee');
 
--- Location_Option (table associative)
-INSERT INTO Location_Option VALUES (1, 1);
-INSERT INTO Location_Option VALUES (1, 3);
-INSERT INTO Location_Option VALUES (2, 1);
-INSERT INTO Location_Option VALUES (3, 3);
-INSERT INTO Location_Option VALUES (4, 1);
-INSERT INTO Location_Option VALUES (4, 4);
-INSERT INTO Location_Option VALUES (6, 1);
-INSERT INTO Location_Option VALUES (6, 2);
-INSERT INTO Location_Option VALUES (6, 3);
-INSERT INTO Location_Option VALUES (9, 5);
-INSERT INTO Location_Option VALUES (10, 3);
-INSERT INTO Location_Option VALUES (12, 1);
-INSERT INTO Location_Option VALUES (13, 2);
-INSERT INTO Location_Option VALUES (15, 1);

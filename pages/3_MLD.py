@@ -86,6 +86,7 @@ st.markdown("""
 | `id_location` | INTEGER | **PRIMARY KEY** |
 | `id_utilisateur` | INTEGER | **FOREIGN KEY → Utilisateurs** |
 | `id_voiture` | INTEGER | **FOREIGN KEY → Voitures** |
+| `id_option` | INTEGER | **FOREIGN KEY → Option** |
 | `date_debut` | DATE | NOT NULL |
 | `date_fin` | DATE | NOT NULL |
 | `statut` | TEXT | DEFAULT 'en_cours' |
@@ -116,17 +117,6 @@ st.markdown("""
 | `statut_paiement` | TEXT | DEFAULT 'en_attente' |
 """)
 
-# Table associative Location_Option
-st.subheader("🔗 Table associative : Location_Option")
-st.markdown("""
-| Attribut | Type | Contraintes |
-|----------|------|-------------|
-| `id_location` | INTEGER | **PK, FOREIGN KEY → Location** |
-| `id_option` | INTEGER | **PK, FOREIGN KEY → Option** |
-
-> Cette table résulte de l'association **N:M** entre Location et Option.
-""")
-
 st.markdown("---")
 
 # ================================================================
@@ -139,10 +129,9 @@ Agences (id_agence, nom, adresse, ville, telephone)
 Utilisateurs (id_utilisateur, nom, prenom, email, telephone, date_naissance)
 Voitures (id_voiture, marque, modele, annee, categorie, prix_journalier, #id_agence)
 Option (id_option, nom, description, prix_journalier)
-Location (id_location, #id_utilisateur, #id_voiture, date_debut, date_fin, statut)
+Location (id_location, #id_utilisateur, #id_voiture, #id_option, date_debut, date_fin, statut)
 Avis (id_avis, #id_utilisateur, #id_voiture, note, commentaire, date_avis)
 Facture (id_facture, #id_location, montant, date_facture, statut_paiement)
-Location_Option (#id_location, #id_option)
 """, language="text")
 
 st.markdown("**Légende :** `#attribut` = clé étrangère")
@@ -220,7 +209,7 @@ with st.expander("**Requête 7** — Jointures multiples : Factures détaillées
 # Requête 8
 with st.expander("**Requête 8** — Jointure : Options choisies par location"):
     st.markdown("Afficher les options associées à chaque location.")
-    st.latex(r"\pi_{id\_location,\ nom}(Location\_Option \bowtie_{id\_option} Option)")
+    st.latex(r"\pi_{id\_location,\ nom}(Location \bowtie_{id\_option} Option)")
 
 # Requête 9 — DIVISION
 with st.expander("**Requête 9** — ÷ Division : Utilisateurs ayant loué dans TOUTES les agences"):
@@ -234,4 +223,4 @@ with st.expander("**Requête 10** — ÷ Division : Utilisateurs ayant loué TOU
 
 st.markdown("---")
 
-st.success("✅ Le MLD définit 8 tables avec leurs contraintes. Les 10 requêtes d'algèbre relationnelle incluent **2 divisions (÷)**.")
+st.success("✅ Le MLD définit 7 tables avec leurs contraintes. Les 10 requêtes d'algèbre relationnelle incluent **2 divisions (÷)**.")
