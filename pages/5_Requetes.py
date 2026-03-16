@@ -8,11 +8,13 @@ import sqlite3
 import pandas as pd
 import os
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 st.title("4️⃣ Requêtes SQL")
 
 st.markdown("---")
 
-DB_PATH = "database.db"
+DB_PATH = os.path.join(PROJECT_ROOT, "database.db")
 
 
 def executer_requete(sql):

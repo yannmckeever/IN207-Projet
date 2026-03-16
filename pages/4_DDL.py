@@ -9,12 +9,14 @@ import sqlite3
 import pandas as pd
 import os
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 st.title("3️⃣ Création et Peuplement (DDL)")
 
 st.markdown("---")
 
-DB_PATH = "database.db"
-SQL_PATH = "init_db.sql"
+DB_PATH = os.path.join(PROJECT_ROOT, "database.db")
+SQL_PATH = os.path.join(PROJECT_ROOT, "init_db.sql")
 
 # ================================================================
 # LECTURE DU FICHIER SQL

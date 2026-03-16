@@ -18,7 +18,8 @@ pg = st.navigation([
     st.Page("pages/3_MLD.py", title="MLD"),
     st.Page("pages/4_DDL.py", title="DDL"),
     st.Page("pages/5_Requetes.py", title="Requêtes"),
-    st.Page("pages/6_Facturation.py", title="Facturation")
+    st.Page("pages/6_Location.py", title="Location"),
+    st.Page("pages/7_Facturation.py", title="Facturation")
 ])
 
 pg.run()
