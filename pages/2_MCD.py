@@ -1,6 +1,6 @@
 """
-Page 1 - Modèle Conceptuel de Données (MCD)
-Présentation du problème métier et du schéma entité-association
+Page 2 - Modèle Conceptuel de Données (MCD)
+Agence de location de voitures
 """
 
 import streamlit as st
@@ -9,71 +9,178 @@ st.title("1️⃣ Modèle Conceptuel de Données (MCD)")
 
 st.markdown("---")
 
-# Section : Énoncé du problème métier
+# ================================================================
+# ÉNONCÉ DU PROBLÈME MÉTIER
+# ================================================================
 st.header("Énoncé du problème métier")
 
 st.markdown("""
 > **Contexte :**  
-> Une université souhaite gérer les informations de ses étudiants.
-> Pour commencer simplement, nous allons modéliser uniquement les étudiants
-> avec leurs informations de base.
+> Une entreprise de location de voitures possède plusieurs **agences** réparties 
+> dans différentes villes françaises. Chaque agence dispose d'une flotte de **voitures** 
+> classées par catégorie (SUV, Berline, Citadine, Utilitaire).
+>
+> Les **clients** (utilisateurs) peuvent louer des véhicules pour une durée déterminée, 
+> ajouter une **option** à leur location (GPS, assurance, siège bébé...), 
+> laisser des **avis** sur les véhicules utilisés et recevoir une **facture** 
+> pour chaque location.
 
 **Besoins identifiés :**
-- Stocker les informations des étudiants (nom, prénom, âge)
-- Pouvoir identifier chaque étudiant de manière unique
-- Permettre des recherches et des statistiques sur les étudiants
+- Gérer les informations des agences et de leur flotte de véhicules
+- Permettre aux clients de louer des voitures avec une option supplémentaire
+- Collecter les avis clients sur les véhicules loués
+- Générer et suivre les factures de location
+- Effectuer des statistiques (chiffre d'affaires par agence, notes moyennes, etc.)
 """)
-
-st.info("💡 Dans un cas réel, l'énoncé serait plus complexe avec plusieurs entités (cours, professeurs, inscriptions, etc.)")
 
 st.markdown("---")
 
-# Section : Schéma entité-association
-st.header("Schéma Entité-Association")
+# ================================================================
+# ENTITÉS ET ATTRIBUTS
+# ================================================================
+st.header("Entités et Attributs")
 
-st.markdown("""
-Pour ce problème simplifié, nous avons une seule entité :
-""")
+col1, col2 = st.columns(2)
 
-# Représentation textuelle du schéma E-A
-st.subheader("Entité : ETUDIANT")
-
-col1, col2, col3 = st.columns([1, 2, 1])
-
-with col2:
+with col1:
+    st.subheader("🏢 AGENCES")
     st.markdown("""
     ```
     ┌─────────────────────────┐
-    │        ETUDIANT         │
+    │        AGENCES          │
     ├─────────────────────────┤
-    │  #id                    │
+    │  #id_agence             │
+    │   nom                   │
+    │   adresse               │
+    │   ville                 │
+    │   telephone             │
+    └─────────────────────────┘
+    ```
+    """)
+
+    st.subheader("🚘 VOITURES")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │        VOITURES         │
+    ├─────────────────────────┤
+    │  #id_voiture            │
+    │   marque                │
+    │   modele                │
+    │   annee                 │
+    │   categorie             │
+    │   prix_journalier       │
+    └─────────────────────────┘
+    ```
+    """)
+
+    st.subheader("📅 LOCATION")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │        LOCATION         │
+    ├─────────────────────────┤
+    │  #id_location           │
+    │   date_debut            │
+    │   date_fin              │
+    │   statut                │
+    └─────────────────────────┘
+    ```
+    """)
+
+    st.subheader("💰 FACTURE")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │        FACTURE          │
+    ├─────────────────────────┤
+    │  #id_facture            │
+    │   montant               │
+    │   date_facture          │
+    │   statut_paiement       │
+    └─────────────────────────┘
+    ```
+    """)
+
+with col2:
+    st.subheader("👤 UTILISATEURS")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │      UTILISATEURS       │
+    ├─────────────────────────┤
+    │  #id_utilisateur        │
     │   nom                   │
     │   prenom                │
-    │   age                   │
+    │   email                 │
+    │   telephone             │
+    │   date_naissance        │
+    └─────────────────────────┘
+    ```
+    """)
+
+    st.subheader("⭐ AVIS")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │          AVIS           │
+    ├─────────────────────────┤
+    │  #id_avis               │
+    │   note                  │
+    │   commentaire           │
+    │   date_avis             │
+    └─────────────────────────┘
+    ```
+    """)
+
+    st.subheader("🔧 OPTION")
+    st.markdown("""
+    ```
+    ┌─────────────────────────┐
+    │         OPTION          │
+    ├─────────────────────────┤
+    │  #id_option             │
+    │   nom                   │
+    │   description           │
+    │   prix_journalier       │
     └─────────────────────────┘
     ```
     """)
 
 st.markdown("""
-**Légende :**
-- `#` : identifiant (clé primaire)
-- Les autres attributs sont des propriétés de l'entité
+**Légende :** `#` = identifiant (clé primaire)
 """)
 
 st.markdown("---")
 
-# Placeholder pour une image
-st.subheader("📷 Schéma graphique (placeholder)")
+# ================================================================
+# ASSOCIATIONS
+# ================================================================
+st.header("Associations")
 
-st.warning("""
-**Emplacement réservé pour un schéma graphique**
-
-Vous pouvez ajouter ici une image de votre schéma entité-association :
-```python
-st.image("chemin/vers/schema_mcd.png", caption="Schéma E-A")
-```
+st.markdown("""
+| Association | Entité 1 | Cardinalité | Entité 2 | Cardinalité | Description |
+|---|---|---|---|---|---|
+| **Possède** | AGENCES | 1,n | VOITURES | 1,1 | Une agence possède plusieurs voitures |
+| **Effectue** | UTILISATEURS | 0,n | LOCATION | 1,1 | Un utilisateur peut faire plusieurs locations |
+| **Concerne** | VOITURES | 0,n | LOCATION | 1,1 | Une voiture peut être louée plusieurs fois |
+| **Rédige** | UTILISATEURS | 0,n | AVIS | 1,1 | Un utilisateur peut rédiger plusieurs avis |
+| **Évalue** | VOITURES | 0,n | AVIS | 1,1 | Une voiture peut recevoir plusieurs avis |
+| **Génère** | LOCATION | 1,1 | FACTURE | 0,1 | Une location génère au plus une facture |
+| **Inclut** | LOCATION | 0,1 | OPTION | 0,n | Une location peut inclure une option |
 """)
+
+st.info("""💡 Une location peut inclure **au plus une option**. Une option peut être utilisée par plusieurs locations.""")
 
 st.markdown("---")
 
-st.success("✅ Le MCD est la première étape : on identifie les entités et leurs attributs sans se soucier de l'implémentation technique.")
+# ================================================================
+# SCHÉMA E-A SIMPLIFIÉ
+# ================================================================
+st.header("Schéma Entité-Association")
+
+st.image("pages/content/Schema_EA.png", caption="Schéma Entité-Association")
+
+st.markdown("---")
+
+st.success("✅ Le MCD identifie **7 entités** et **7 associations**. Le passage au MLD produira **7 tables**.")

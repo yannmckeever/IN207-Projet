@@ -1,6 +1,6 @@
 """
-Page 4 - Requêtes SQL
-Requêtes SELECT avec correspondance algèbre relationnelle
+Page 5 - Requêtes SQL
+10 requêtes algèbre → SQL + 10 requêtes avec agrégation
 """
 
 import streamlit as st
@@ -8,19 +8,19 @@ import sqlite3
 import pandas as pd
 import os
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 st.title("4️⃣ Requêtes SQL")
 
 st.markdown("---")
 
-# Chemin vers la base de données
-DB_PATH = "database.db"
+DB_PATH = os.path.join(PROJECT_ROOT, "database.db")
 
 
 def executer_requete(sql):
-    """Exécute une requête SQL et retourne un DataFrame"""
+    """Exécute une requête SQL et retourne un DataFrame."""
     if not os.path.exists(DB_PATH):
         return None
-    
     conn = sqlite3.connect(DB_PATH)
     try:
         df = pd.read_sql_query(sql, conn)
@@ -32,93 +32,403 @@ def executer_requete(sql):
         conn.close()
 
 
-# Vérifier si la base existe
 if not os.path.exists(DB_PATH):
-    st.warning("⚠️ La base de données n'existe pas. Veuillez d'abord la créer dans la page DDL.")
+    st.warning("⚠️ La base de données n'existe pas. Veuillez d'abord la créer dans la page **DDL**.")
     st.stop()
 
-# Requête 1 : Sélection de tous les étudiants
-st.header("1. Afficher tous les étudiants")
+# ================================================================
+# PARTIE 1 : ALGÈBRE RELATIONNELLE → SQL (10 requêtes)
+# ================================================================
+st.header("📐 Partie 1 : Algèbre relationnelle → SQL")
 
-sql1 = "SELECT * FROM Etudiant;"
+st.markdown("Traduction des 10 requêtes d'algèbre relationnelle du MLD en SQL.")
 
-col1, _, col3 = st.columns([1, 1, 2])
+st.markdown("---")
 
+# ---- Requête 1 ----
+st.subheader("Requête 1 — Sélection : Utilisateurs nés avant 1995")
+
+col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Algèbre relationnelle")
-    st.latex(r"Etudiant")
-
-with col3:
-    st.subheader("SQL")
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\sigma_{date\_naissance < '1995\text{-}01\text{-}01'}(Utilisateurs)")
+with col2:
+    sql1 = "SELECT * FROM Utilisateurs WHERE date_naissance < '1995-01-01';"
+    st.markdown("**SQL :**")
     st.code(sql1, language="sql")
 
-st.subheader("Résultat")
-df1 = executer_requete(sql1)
-if df1 is not None:
-    st.dataframe(df1, width='stretch')
+df = executer_requete(sql1)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
 
 st.markdown("---")
 
-# Requête 2 : Projection (noms et prénoms)
-st.header("2. Projection : noms et prénoms uniquement")
+# ---- Requête 2 ----
+st.subheader("Requête 2 — Projection : Marques et modèles")
 
-sql2 = "SELECT nom, prenom FROM Etudiant;"
-
-col1, _, col3 = st.columns([1, 1, 2])
-
+col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Algèbre relationnelle")
-    st.latex(r"\pi_{nom, prenom}(Etudiant)")
-
-with col3:
-    st.subheader("SQL")
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{marque,\ modele}(Voitures)")
+with col2:
+    sql2 = "SELECT DISTINCT marque, modele FROM Voitures;"
+    st.markdown("**SQL :**")
     st.code(sql2, language="sql")
 
-st.subheader("Résultat")
-df2 = executer_requete(sql2)
-if df2 is not None:
-    st.dataframe(df2, width='stretch')
+df = executer_requete(sql2)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
 
 st.markdown("---")
 
-# Requête 3 : Sélection (étudiants > 20 ans)
-st.header("3. Sélection : étudiants de plus de 20 ans")
+# ---- Requête 3 ----
+st.subheader("Requête 3 — Sélection + Projection : Voitures SUV")
 
-sql3 = "SELECT * FROM Etudiant WHERE age > 20;"
-
-col1, _, col3 = st.columns([1, 1, 2])
-
+col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Algèbre relationnelle")
-    st.latex(r"\sigma_{age > 20}(Etudiant)")
-
-with col3:
-    st.subheader("SQL")
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{marque,\ modele}(\sigma_{categorie = 'SUV'}(Voitures))")
+with col2:
+    sql3 = "SELECT marque, modele FROM Voitures WHERE categorie = 'SUV';"
+    st.markdown("**SQL :**")
     st.code(sql3, language="sql")
 
-st.subheader("Résultat")
-df3 = executer_requete(sql3)
-if df3 is not None:
-    st.dataframe(df3, width='stretch')
+df = executer_requete(sql3)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
 
 st.markdown("---")
 
-# Requête 4 : Combinaison sélection + projection
-st.header("4. Sélection + Projection : noms des étudiants > 20 ans")
+# ---- Requête 4 ----
+st.subheader("Requête 4 — Jointure : Locations avec noms des clients")
 
-sql4 = "SELECT nom FROM Etudiant WHERE age > 20;"
-
-col1, _, col3 = st.columns([1, 1, 2])
-
+col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Algèbre relationnelle")
-    st.latex(r"\pi_{nom}(\sigma_{age > 20}(Etudiant))")
-
-with col3:
-    st.subheader("SQL")
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"Location \bowtie_{id\_utilisateur} Utilisateurs")
+with col2:
+    sql4 = """SELECT L.id_location, U.nom, U.prenom, L.date_debut, L.date_fin, L.statut
+FROM Location L
+JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur;"""
+    st.markdown("**SQL :**")
     st.code(sql4, language="sql")
 
-st.subheader("Résultat")
-df4 = executer_requete(sql4)
-if df4 is not None:
-    st.dataframe(df4, width='stretch')
+df = executer_requete(sql4)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 5 ----
+st.subheader("Requête 5 — Jointure : Voitures avec leur agence")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{marque,\ modele,\ categorie,\ nom}(Voitures \bowtie_{id\_agence} Agences)")
+with col2:
+    sql5 = """SELECT V.marque, V.modele, V.categorie, A.nom AS agence
+FROM Voitures V
+JOIN Agences A ON V.id_agence = A.id_agence;"""
+    st.markdown("**SQL :**")
+    st.code(sql5, language="sql")
+
+df = executer_requete(sql5)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 6 ----
+st.subheader("Requête 6 — Jointure + Sélection : Avis avec note ≥ 4")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{nom,\ prenom,\ note,\ commentaire}(\sigma_{note \geq 4}(Avis \bowtie Utilisateurs))")
+with col2:
+    sql6 = """SELECT U.nom, U.prenom, A.note, A.commentaire
+FROM Avis A
+JOIN Utilisateurs U ON A.id_utilisateur = U.id_utilisateur
+WHERE A.note >= 4;"""
+    st.markdown("**SQL :**")
+    st.code(sql6, language="sql")
+
+df = executer_requete(sql6)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 7 ----
+st.subheader("Requête 7 — Jointures multiples : Factures détaillées")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{nom,\ marque,\ montant}(Facture \bowtie Location \bowtie Utilisateurs \bowtie Voitures)")
+with col2:
+    sql7 = """SELECT U.nom, U.prenom, V.marque, V.modele, F.montant, F.statut_paiement
+FROM Facture F
+JOIN Location L ON F.id_location = L.id_location
+JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
+JOIN Voitures V ON L.id_voiture = V.id_voiture;"""
+    st.markdown("**SQL :**")
+    st.code(sql7, language="sql")
+
+df = executer_requete(sql7)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 8 ----
+st.subheader("Requête 8 — Jointure : Options choisies par location")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{id\_location,\ nom}(Location \bowtie_{id\_option} Option)")
+with col2:
+    sql8 = """SELECT L.id_location, O.nom AS option_choisie
+FROM Location L
+JOIN Option O ON L.id_option = O.id_option;"""
+    st.markdown("**SQL :**")
+    st.code(sql8, language="sql")
+
+df = executer_requete(sql8)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 9 — DIVISION ----
+st.subheader("Requête 9 — ÷ Division : Utilisateurs ayant loué dans TOUTES les agences")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{id\_utilisateur,\ id\_agence}(Location \bowtie Voitures) \div \pi_{id\_agence}(Agences)")
+with col2:
+    sql9 = """SELECT U.nom, U.prenom
+FROM Utilisateurs U
+WHERE NOT EXISTS (
+    SELECT A.id_agence FROM Agences A
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Location L
+        JOIN Voitures V ON L.id_voiture = V.id_voiture
+        WHERE L.id_utilisateur = U.id_utilisateur
+        AND V.id_agence = A.id_agence
+    )
+);"""
+    st.markdown("**SQL :**")
+    st.code(sql9, language="sql")
+
+st.info("💡 La **division** en SQL se traduit par un double `NOT EXISTS`.")
+df = executer_requete(sql9)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 10 — DIVISION ----
+st.subheader("Requête 10 — ÷ Division : Utilisateurs ayant loué TOUTES les catégories")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(r"\pi_{id\_utilisateur,\ categorie}(Location \bowtie Voitures) \div \pi_{categorie}(Voitures)")
+with col2:
+    sql10 = """SELECT U.nom, U.prenom
+FROM Utilisateurs U
+WHERE NOT EXISTS (
+    SELECT DISTINCT V.categorie FROM Voitures V
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Location L
+        JOIN Voitures V2 ON L.id_voiture = V2.id_voiture
+        WHERE L.id_utilisateur = U.id_utilisateur
+        AND V2.categorie = V.categorie
+    )
+);"""
+    st.markdown("**SQL :**")
+    st.code(sql10, language="sql")
+
+st.info("💡 Résultat attendu : les utilisateurs qui ont loué dans les 4 catégories (SUV, Berline, Citadine, Utilitaire).")
+df = executer_requete(sql10)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+st.markdown("---")
+
+# ================================================================
+# PARTIE 2 : REQUÊTES AVEC AGRÉGATION (10 requêtes)
+# ================================================================
+st.header("📊 Partie 2 : Requêtes avec agrégation")
+
+st.markdown("10 requêtes utilisant **COUNT, SUM, AVG, MIN, MAX**, **GROUP BY** et **HAVING**.")
+
+st.markdown("---")
+
+# ---- Requête 11 ----
+st.subheader("Requête 11 — COUNT : Nombre de locations par utilisateur")
+
+sql11 = """SELECT U.nom, U.prenom, COUNT(*) AS nb_locations
+FROM Location L
+JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
+GROUP BY U.id_utilisateur;"""
+
+st.code(sql11, language="sql")
+df = executer_requete(sql11)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 12 ----
+st.subheader("Requête 12 — AVG : Note moyenne par voiture")
+
+sql12 = """SELECT V.marque, V.modele, ROUND(AVG(A.note), 2) AS note_moyenne
+FROM Avis A
+JOIN Voitures V ON A.id_voiture = V.id_voiture
+GROUP BY V.id_voiture;"""
+
+st.code(sql12, language="sql")
+df = executer_requete(sql12)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 13 ----
+st.subheader("Requête 13 — SUM : Chiffre d'affaires par agence")
+
+sql13 = """SELECT Ag.nom AS agence, SUM(F.montant) AS chiffre_affaires
+FROM Facture F
+JOIN Location L ON F.id_location = L.id_location
+JOIN Voitures V ON L.id_voiture = V.id_voiture
+JOIN Agences Ag ON V.id_agence = Ag.id_agence
+WHERE F.statut_paiement = 'payee'
+GROUP BY Ag.id_agence;"""
+
+st.code(sql13, language="sql")
+df = executer_requete(sql13)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 14 ----
+st.subheader("Requête 14 — MIN / MAX : Prix par catégorie")
+
+sql14 = """SELECT categorie,
+       MIN(prix_journalier) AS prix_min,
+       MAX(prix_journalier) AS prix_max
+FROM Voitures
+GROUP BY categorie;"""
+
+st.code(sql14, language="sql")
+df = executer_requete(sql14)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 15 ----
+st.subheader("Requête 15 — COUNT + HAVING : Utilisateurs avec plus de 3 locations")
+
+sql15 = """SELECT U.nom, U.prenom, COUNT(*) AS nb_locations
+FROM Location L
+JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
+GROUP BY U.id_utilisateur
+HAVING COUNT(*) > 3;"""
+
+st.code(sql15, language="sql")
+df = executer_requete(sql15)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 16 ----
+st.subheader("Requête 16 — AVG + HAVING : Voitures avec note moyenne ≥ 4")
+
+sql16 = """SELECT V.marque, V.modele, ROUND(AVG(A.note), 2) AS note_moyenne
+FROM Avis A
+JOIN Voitures V ON A.id_voiture = V.id_voiture
+GROUP BY V.id_voiture
+HAVING AVG(A.note) >= 4;"""
+
+st.code(sql16, language="sql")
+df = executer_requete(sql16)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 17 ----
+st.subheader("Requête 17 — COUNT : Nombre de voitures par agence et catégorie")
+
+sql17 = """SELECT Ag.nom AS agence, V.categorie, COUNT(*) AS nb_voitures
+FROM Voitures V
+JOIN Agences Ag ON V.id_agence = Ag.id_agence
+GROUP BY Ag.id_agence, V.categorie
+ORDER BY Ag.nom, V.categorie;"""
+
+st.code(sql17, language="sql")
+df = executer_requete(sql17)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 18 ----
+st.subheader("Requête 18 — SUM + HAVING : Clients ayant dépensé plus de 500€")
+
+sql18 = """SELECT U.nom, U.prenom, SUM(F.montant) AS total_depense
+FROM Facture F
+JOIN Location L ON F.id_location = L.id_location
+JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
+WHERE F.statut_paiement = 'payee'
+GROUP BY U.id_utilisateur
+HAVING SUM(F.montant) > 500;"""
+
+st.code(sql18, language="sql")
+df = executer_requete(sql18)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 19 ----
+st.subheader("Requête 19 — AVG : Durée moyenne de location par catégorie")
+
+sql19 = """SELECT V.categorie,
+       ROUND(AVG(julianday(L.date_fin) - julianday(L.date_debut)), 1) AS duree_moyenne_jours
+FROM Location L
+JOIN Voitures V ON L.id_voiture = V.id_voiture
+GROUP BY V.categorie;"""
+
+st.code(sql19, language="sql")
+df = executer_requete(sql19)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+# ---- Requête 20 ----
+st.subheader("Requête 20 — COUNT : Répartition des avis par note")
+
+sql20 = """SELECT note, COUNT(*) AS nombre_avis
+FROM Avis
+GROUP BY note
+ORDER BY note DESC;"""
+
+st.code(sql20, language="sql")
+df = executer_requete(sql20)
+if df is not None:
+    st.dataframe(df, use_container_width=True)
+
+st.markdown("---")
+
+st.success("✅ 20 requêtes SQL au total : 10 traduites de l'algèbre relationnelle (dont 2 divisions ÷) + 10 avec agrégation (COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING).")

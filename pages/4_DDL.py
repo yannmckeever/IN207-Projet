@@ -1,78 +1,97 @@
 """
-Page 3 - Création et Peuplement (DDL)
-Requêtes CREATE TABLE et INSERT, création de la base SQLite
+Page 4 - Création et Peuplement (DDL)
+Agence de location de voitures
+Lit le fichier init_db.sql pour créer et peupler la base.
 """
 
 import streamlit as st
 import sqlite3
+import pandas as pd
 import os
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 st.title("3️⃣ Création et Peuplement (DDL)")
 
 st.markdown("---")
 
-# Chemin vers la base de données
-DB_PATH = "database.db"
+DB_PATH = os.path.join(PROJECT_ROOT, "database.db")
+SQL_PATH = os.path.join(PROJECT_ROOT, "init_db.sql")
 
-# Section : Requêtes CREATE TABLE
-st.header("Requêtes CREATE TABLE")
+# ================================================================
+# LECTURE DU FICHIER SQL
+# ================================================================
 
-st.markdown("""
-Le DDL (Data Definition Language) permet de définir la structure de la base de données.
-""")
+if not os.path.exists(SQL_PATH):
+    st.error(f"❌ Fichier `{SQL_PATH}` introuvable.")
+    st.stop()
 
-create_table_sql = """CREATE TABLE IF NOT EXISTS Etudiant (
-    id INTEGER PRIMARY KEY,
-    nom TEXT NOT NULL,
-    prenom TEXT NOT NULL,
-    age INTEGER
-);"""
+with open(SQL_PATH, "r", encoding="utf-8") as f:
+    sql_script = f.read()
 
-st.code(create_table_sql, language="sql")
+# ================================================================
+# AFFICHAGE DU CONTENU SQL
+# ================================================================
+st.header("Fichier SQL : `init_db.sql`")
+
+st.markdown("Le fichier `init_db.sql` contient toutes les requêtes de création et de peuplement de la base.")
+
+st.code(sql_script, language="sql")
 
 st.markdown("""
 **Explications :**
-- `CREATE TABLE` : crée une nouvelle table
-- `IF NOT EXISTS` : évite une erreur si la table existe déjà
-- `INTEGER PRIMARY KEY` : clé primaire auto-incrémentée en SQLite
-- `TEXT NOT NULL` : chaîne de caractères obligatoire
+- `PRIMARY KEY` : identifiant unique de chaque enregistrement
+- `FOREIGN KEY` : clé étrangère référençant une autre table
+- `NOT NULL` : valeur obligatoire
+- `UNIQUE` : valeur unique dans la table
+- `CHECK` : contrainte de validité (note entre 1 et 5)
+- `DEFAULT` : valeur par défaut
 """)
 
 st.markdown("---")
 
-# Section : Requêtes INSERT
-st.header("Requêtes INSERT")
+# ================================================================
+# BOUTON DE CRÉATION DE LA BASE
+# ================================================================
+st.header("Création de la base de données")
 
-st.markdown("""
-Les requêtes INSERT permettent d'ajouter des données dans les tables.
-""")
+if st.button("🔄 Créer / Réinitialiser la base de données", type="primary"):
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
 
-insert_sql = """INSERT INTO Etudiant (id, nom, prenom, age) VALUES
-    (1, 'Dupont', 'Marie', 22),
-    (2, 'Martin', 'Jean', 19),
-    (3, 'Bernard', 'Sophie', 21),
-    (4, 'Petit', 'Lucas', 23);"""
-
-st.code(insert_sql, language="sql")
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.executescript(sql_script)
+        conn.commit()
+        st.success("✅ Base de données créée et peuplée avec succès à partir de `init_db.sql` !")
+    except Exception as e:
+        st.error(f"❌ Erreur : {e}")
+    finally:
+        conn.close()
 
 st.markdown("---")
 
-# Afficher le contenu actuel de la base
-st.subheader("Contenu actuel de la base")
+# ================================================================
+# AFFICHAGE DU CONTENU DE LA BASE
+# ================================================================
+st.header("Contenu actuel de la base")
 
 if os.path.exists(DB_PATH):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Etudiant")
-        rows = cursor.fetchall()
-        conn.close()
-        
-        if rows:
-            import pandas as pd
-            df = pd.DataFrame(rows, columns=['id', 'nom', 'prenom', 'age'])
-            st.dataframe(df, width='stretch')
-        else:
-            st.info("La table Etudiant est vide.")
-    except Exception as e:
-        st.error(f"Erreur de lecture : {e}")
+    conn = sqlite3.connect(DB_PATH)
+
+    tables = [
+        "Agences", "Utilisateurs", "Voitures", "Option",
+        "Location", "Avis", "Facture"
+    ]
+
+    for table in tables:
+        try:
+            df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
+            st.subheader(f"📋 {table} ({len(df)} lignes)")
+            st.dataframe(df, use_container_width=True)
+        except Exception as e:
+            st.warning(f"Table {table} : {e}")
+
+    conn.close()
+else:
+    st.info("📭 Aucune base de données trouvée. Cliquez sur le bouton ci-dessus pour la créer.")

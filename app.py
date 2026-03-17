@@ -13,11 +13,13 @@ st.set_page_config(
 
 # Configuration de la navigation
 pg = st.navigation([
-    st.Page("pages/1_Accueil.py", title="Accueil", icon="🏠", default=True),
-    st.Page("pages/2_MCD.py", title="MCD", icon="📊"),
-    st.Page("pages/3_MLD.py", title="MLD", icon="📋"),
-    st.Page("pages/4_DDL.py", title="DDL", icon="🔧"),
-    st.Page("pages/5_Requetes.py", title="Requêtes", icon="🔍")
+    st.Page("pages/1_Accueil.py", title="Accueil", default=True),
+    st.Page("pages/2_MCD.py", title="MCD"),
+    st.Page("pages/3_MLD.py", title="MLD"),
+    st.Page("pages/4_DDL.py", title="DDL"),
+    st.Page("pages/5_Requetes.py", title="Requêtes"),
+    st.Page("pages/6_Location.py", title="Location"),
+    st.Page("pages/7_Facturation.py", title="Facturation")
 ])
 
 pg.run()
