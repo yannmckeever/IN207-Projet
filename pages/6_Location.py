@@ -273,7 +273,7 @@ with tab_clients:
             email_c = st.text_input("Email *", key="add_cli_email")
         with c2:
             tel_c = st.text_input("Téléphone", key="add_cli_tel")
-            ddn_c = st.date_input("Date de naissance", value=date(1990, 1, 1), key="add_cli_ddn")
+            ddn_c = st.date_input("Date de naissance", value=date(1990, 1, 1),min_value=date(1900, 1, 1),max_value=date.today(), key="add_cli_ddn")
         if st.button("✅ Ajouter le client", key="btn_add_cli"):
             if not nom_c or not prenom_c or not email_c:
                 st.error("Nom, prénom et email sont obligatoires.")
