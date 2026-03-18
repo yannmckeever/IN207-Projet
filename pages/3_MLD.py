@@ -5,7 +5,7 @@ Description des tables et algèbre relationnelle
 
 import streamlit as st
 
-st.title("2️⃣ Modèle Logique de Données (MLD)")
+st.title("2. Modèle Logique de Données (MLD)")
 
 st.markdown("---")
 
@@ -29,7 +29,7 @@ st.markdown("---")
 st.header("Description des tables")
 
 # Table Agences
-st.subheader("🏢 Table : Agences")
+st.subheader("Table : Agences")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -41,7 +41,7 @@ st.markdown("""
 """)
 
 # Table Utilisateurs
-st.subheader("👤 Table : Utilisateurs")
+st.subheader("Table : Utilisateurs")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -54,7 +54,7 @@ st.markdown("""
 """)
 
 # Table Voitures
-st.subheader("🚘 Table : Voitures")
+st.subheader("Table : Voitures")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -68,7 +68,7 @@ st.markdown("""
 """)
 
 # Table Option
-st.subheader("🔧 Table : Option")
+st.subheader("Table : Option")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -79,7 +79,7 @@ st.markdown("""
 """)
 
 # Table Location
-st.subheader("📅 Table : Location")
+st.subheader("Table : Location")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -93,7 +93,7 @@ st.markdown("""
 """)
 
 # Table Avis
-st.subheader("⭐ Table : Avis")
+st.subheader("Table : Avis")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -106,7 +106,7 @@ st.markdown("""
 """)
 
 # Table Facture
-st.subheader("💰 Table : Facture")
+st.subheader("Table : Facture")
 st.markdown("""
 | Attribut | Type | Contraintes |
 |----------|------|-------------|
@@ -168,59 +168,4 @@ with col4:
 
 st.markdown("---")
 
-# ---- 10 REQUÊTES EN ALGÈBRE RELATIONNELLE ----
-st.header("10 requêtes en algèbre relationnelle")
 
-# Requête 1
-with st.expander("**Requête 1** — Sélection : Utilisateurs nés avant 1995"):
-    st.markdown("Trouver tous les utilisateurs nés avant le 1er janvier 1995.")
-    st.latex(r"\sigma_{date\_naissance < '1995\text{-}01\text{-}01'}(Utilisateurs)")
-
-# Requête 2
-with st.expander("**Requête 2** — Projection : Marques et modèles des voitures"):
-    st.markdown("Afficher uniquement les marques et modèles de toutes les voitures.")
-    st.latex(r"\pi_{marque,\ modele}(Voitures)")
-
-# Requête 3
-with st.expander("**Requête 3** — Sélection + Projection : Voitures de catégorie SUV"):
-    st.markdown("Afficher les marques et modèles des voitures de catégorie SUV.")
-    st.latex(r"\pi_{marque,\ modele}(\sigma_{categorie = 'SUV'}(Voitures))")
-
-# Requête 4
-with st.expander("**Requête 4** — Jointure : Locations avec noms des utilisateurs"):
-    st.markdown("Afficher les locations avec le nom et prénom du client.")
-    st.latex(r"Location \bowtie_{id\_utilisateur} Utilisateurs")
-
-# Requête 5
-with st.expander("**Requête 5** — Jointure : Voitures avec leur agence"):
-    st.markdown("Afficher chaque voiture avec le nom de son agence.")
-    st.latex(r"\pi_{marque,\ modele,\ categorie,\ nom}(Voitures \bowtie_{id\_agence} Agences)")
-
-# Requête 6
-with st.expander("**Requête 6** — Jointure + Sélection : Avis avec note ≥ 4"):
-    st.markdown("Afficher les avis avec note ≥ 4 et le nom de l'utilisateur.")
-    st.latex(r"\pi_{nom,\ prenom,\ note,\ commentaire}(\sigma_{note \geq 4}(Avis \bowtie_{id\_utilisateur} Utilisateurs))")
-
-# Requête 7
-with st.expander("**Requête 7** — Jointures multiples : Factures détaillées"):
-    st.markdown("Afficher les factures avec le nom du client et la voiture louée.")
-    st.latex(r"\pi_{nom,\ prenom,\ marque,\ modele,\ montant}(Facture \bowtie Location \bowtie Utilisateurs \bowtie Voitures)")
-
-# Requête 8
-with st.expander("**Requête 8** — Jointure : Options choisies par location"):
-    st.markdown("Afficher les options associées à chaque location.")
-    st.latex(r"\pi_{id\_location,\ nom}(Location \bowtie_{id\_option} Option)")
-
-# Requête 9 — DIVISION
-with st.expander("**Requête 9** — ÷ Division : Utilisateurs ayant loué dans TOUTES les agences"):
-    st.markdown("Trouver les utilisateurs qui ont loué au moins une voiture dans **chacune** des agences.")
-    st.latex(r"\pi_{id\_utilisateur,\ id\_agence}(Location \bowtie Voitures) \div \pi_{id\_agence}(Agences)")
-
-# Requête 10 — DIVISION
-with st.expander("**Requête 10** — ÷ Division : Utilisateurs ayant loué TOUTES les catégories"):
-    st.markdown("Trouver les utilisateurs qui ont loué au moins une voiture de **chaque** catégorie.")
-    st.latex(r"\pi_{id\_utilisateur,\ categorie}(Location \bowtie Voitures) \div \pi_{categorie}(Voitures)")
-
-st.markdown("---")
-
-st.success("✅ Le MLD définit 7 tables avec leurs contraintes. Les 10 requêtes d'algèbre relationnelle incluent **2 divisions (÷)**.")
