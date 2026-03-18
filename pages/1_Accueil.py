@@ -6,7 +6,7 @@ Agence de location de voitures
 import streamlit as st
 
 # Titre principal
-st.title("🚗 IN207 - Agence de Location de Voitures")
+st.title("IN207 - Agence de Location de Voitures")
 
 st.markdown("---")
 
@@ -25,49 +25,49 @@ ses clients, les locations avec option, les avis clients et la facturation.
 st.markdown("---")
 
 # Présentation des tables
-st.header("📋 Tables de la base de données")
+st.header("Tables de la base de données")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("🏢 Agences")
+    st.subheader("Agences")
     st.markdown("Informations sur les agences de location")
 
-    st.subheader("👤 Utilisateurs")
+    st.subheader("Utilisateurs")
     st.markdown("Clients de l'agence de location")
 
-    st.subheader("🚘 Voitures")
+    st.subheader("Voitures")
     st.markdown("Flotte de véhicules disponibles")
 
-    st.subheader("🔧 Option")
+    st.subheader("Option")
     st.markdown("Options supplémentaires (GPS, assurance...)")
 
 with col2:
-    st.subheader("📅 Location")
+    st.subheader("Location")
     st.markdown("Réservations de véhicules par les clients")
 
-    st.subheader("⭐ Avis")
+    st.subheader("Avis")
     st.markdown("Évaluations des véhicules par les clients")
 
-    st.subheader("💰 Facture")
+    st.subheader("Facture")
     st.markdown("Facturation des locations")
 
 st.markdown("---")
 
 # Présentation des 4 étapes
-st.header("📚 Étapes du projet")
+st.header("Étapes du projet")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("1️⃣ Modèle Conceptuel (MCD)")
+    st.subheader("1. Modèle Conceptuel (MCD)")
     st.markdown("""
     - Analyse du problème métier
     - Identification des entités et associations
     - Schéma entité-association
     """)
 
-    st.subheader("2️⃣ Modèle Logique (MLD)")
+    st.subheader("2. Modèle Logique (MLD)")
     st.markdown("""
     - Traduction du MCD en tables
     - Définition des attributs et types
@@ -75,14 +75,14 @@ with col1:
     """)
 
 with col2:
-    st.subheader("3️⃣ Création et Peuplement (DDL)")
+    st.subheader("3. Création et Peuplement (DDL)")
     st.markdown("""
     - Requêtes CREATE TABLE
     - Requêtes INSERT
     - Création de la base SQLite
     """)
 
-    st.subheader("4️⃣ Requêtes SQL")
+    st.subheader("4. Requêtes SQL")
     st.markdown("""
     - 10 requêtes (algèbre relationnelle → SQL)
     - 10 requêtes avec agrégation
@@ -91,4 +91,5 @@ with col2:
 
 st.markdown("---")
 
-st.info("👈 Utilisez le menu latéral pour naviguer entre les différentes étapes.")
+st.info("Utilisez le menu latéral pour naviguer entre les différentes étapes.")
+
