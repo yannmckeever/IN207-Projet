@@ -82,6 +82,7 @@ with col1:
     ├─────────────────────────┤
     │  #id_location           │
     │   date_debut            │
+    │   id_option             │
     │   date_fin              │
     │   statut                │
     └─────────────────────────┘
