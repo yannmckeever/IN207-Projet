@@ -32,6 +32,13 @@ def executer_requete(sql):
         conn.close()
 
 
+def afficher_requete_relationnelle(algebre, sql):
+    st.markdown("**Algèbre relationnelle :**")
+    st.latex(algebre)
+    st.markdown("**SQL :**")
+    st.code(sql, language="sql")
+
+
 if not os.path.exists(DB_PATH):
     st.warning("La base de données n'existe pas. Veuillez d'abord la créer dans la page **DDL**.")
     st.stop()
@@ -45,14 +52,11 @@ st.markdown("---")
 # ---- Requête 1 ----
 st.subheader("Requête 1 — Sélection : Locations actuellement en cours")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\sigma_{statut = 'en\_cours'}(Location)")
-with col2:
-    sql1 = "SELECT * FROM Location WHERE statut = 'en_cours';"
-    st.markdown("**SQL :**")
-    st.code(sql1, language="sql")
+sql1 = "SELECT * FROM Location WHERE statut = 'en_cours';"
+afficher_requete_relationnelle(
+    r"\sigma_{statut = 'en\_cours'}(Location)",
+    sql1,
+)
 
 df = executer_requete(sql1)
 if df is not None:
@@ -63,16 +67,13 @@ st.markdown("---")
 # ---- Requête 2 ----
 st.subheader("Requête 2 — Projection : Couples (ville, catégorie) de l'offre")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{ville,\ categorie}(Agences \bowtie_{id\_agence} Voitures)")
-with col2:
-    sql2 = """SELECT DISTINCT A.ville, V.categorie
+sql2 = """SELECT DISTINCT A.ville, V.categorie
 FROM Voitures V
 JOIN Agences A ON V.id_agence = A.id_agence;"""
-    st.markdown("**SQL :**")
-    st.code(sql2, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{ville,\ categorie}(Agences \bowtie_{id\_agence} Voitures)",
+    sql2,
+)
 
 df = executer_requete(sql2)
 if df is not None:
@@ -83,16 +84,13 @@ st.markdown("---")
 # ---- Requête 3 ----
 st.subheader("Requête 3 — Sélection + Projection : Utilitaires économiques (< 60€/jour)")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{marque,\ modele,\ prix\_journalier}(\sigma_{categorie = 'Utilitaire' \land prix\_journalier < 60}(Voitures))")
-with col2:
-    sql3 = """SELECT marque, modele, prix_journalier
+sql3 = """SELECT marque, modele, prix_journalier
 FROM Voitures
 WHERE categorie = 'Utilitaire' AND prix_journalier < 60;"""
-    st.markdown("**SQL :**")
-    st.code(sql3, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{marque,\ modele,\ prix\_journalier}(\sigma_{categorie = 'Utilitaire' \land prix\_journalier < 60}(Voitures))",
+    sql3,
+)
 
 df = executer_requete(sql3)
 if df is not None:
@@ -103,18 +101,15 @@ st.markdown("---")
 # ---- Requête 4 ----
 st.subheader("Requête 4 — Jointure : Détail des locations terminées (client + véhicule)")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ date\_debut,\ date\_fin}(\sigma_{statut='terminee'}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures)")
-with col2:
-    sql4 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, L.date_debut, L.date_fin
+sql4 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, L.date_debut, L.date_fin
 FROM Location L
 JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
 JOIN Voitures V ON L.id_voiture = V.id_voiture
 WHERE L.statut = 'terminee';"""
-    st.markdown("**SQL :**")
-    st.code(sql4, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ date\_debut,\ date\_fin}(\sigma_{statut='terminee'}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures)",
+    sql4,
+)
 
 df = executer_requete(sql4)
 if df is not None:
@@ -125,20 +120,17 @@ st.markdown("---")
 # ---- Requête 5 ----
 st.subheader("Requête 5 — Jointure : Factures en attente (suivi recouvrement)")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_facture,\ montant,\ nom,\ prenom,\ agence}(\sigma_{statut\_paiement='en\_attente'}(Facture) \bowtie_{id\_location} Location \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_agence} Agences)")
-with col2:
-    sql5 = """SELECT F.id_facture, F.montant, U.nom, U.prenom, A.nom AS agence
+sql5 = """SELECT F.id_facture, F.montant, U.nom, U.prenom, A.nom AS agence
 FROM Facture F
 JOIN Location L ON F.id_location = L.id_location
 JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
 JOIN Voitures V ON L.id_voiture = V.id_voiture
 JOIN Agences A ON V.id_agence = A.id_agence
 WHERE F.statut_paiement = 'en_attente';"""
-    st.markdown("**SQL :**")
-    st.code(sql5, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_facture,\ montant,\ nom,\ prenom,\ agence}(\sigma_{statut\_paiement='en\_attente'}(Facture) \bowtie_{id\_location} Location \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_agence} Agences)",
+    sql5,
+)
 
 df = executer_requete(sql5)
 if df is not None:
@@ -149,19 +141,16 @@ st.markdown("---")
 # ---- Requête 6 ----
 st.subheader("Requête 6 — Jointure + Sélection : Avis critiques (note ≤ 3) par ville")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{nom,\ prenom,\ marque,\ modele,\ note,\ commentaire,\ ville}(\sigma_{note \leq 3}(Avis \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_agence} Agences))")
-with col2:
-    sql6 = """SELECT U.nom, U.prenom, V.marque, V.modele, Av.note, Av.commentaire, Ag.ville
+sql6 = """SELECT U.nom, U.prenom, V.marque, V.modele, Av.note, Av.commentaire, Ag.ville
 FROM Avis Av
 JOIN Utilisateurs U ON Av.id_utilisateur = U.id_utilisateur
 JOIN Voitures V ON Av.id_voiture = V.id_voiture
 JOIN Agences Ag ON V.id_agence = Ag.id_agence
 WHERE Av.note <= 3;"""
-    st.markdown("**SQL :**")
-    st.code(sql6, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{nom,\ prenom,\ marque,\ modele,\ note,\ commentaire,\ ville}(\sigma_{note \leq 3}(Avis \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_agence} Agences))",
+    sql6,
+)
 
 df = executer_requete(sql6)
 if df is not None:
@@ -172,19 +161,16 @@ st.markdown("---")
 # ---- Requête 7 ----
 st.subheader("Requête 7 — Jointures multiples : Locations avec options choisies")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ option}(\sigma_{id\_option\neq NULL}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_option} Option)")
-with col2:
-    sql7 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, O.nom AS option_choisie
+sql7 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, O.nom AS option_choisie
 FROM Location L
 JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
 JOIN Voitures V ON L.id_voiture = V.id_voiture
 JOIN Option O ON L.id_option = O.id_option
 WHERE L.id_option IS NOT NULL;"""
-    st.markdown("**SQL :**")
-    st.code(sql7, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ option}(\sigma_{id\_option\neq NULL}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures \bowtie_{id\_option} Option)",
+    sql7,
+)
 
 df = executer_requete(sql7)
 if df is not None:
@@ -195,18 +181,15 @@ st.markdown("---")
 # ---- Requête 8 ----
 st.subheader("Requête 8 — Jointure : Détail des locations annulées")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ date\_debut,\ date\_fin}(\sigma_{statut='annulee'}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures)")
-with col2:
-    sql8 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, L.date_debut, L.date_fin
+sql8 = """SELECT L.id_location, U.nom, U.prenom, V.marque, V.modele, L.date_debut, L.date_fin
 FROM Location L
 JOIN Utilisateurs U ON L.id_utilisateur = U.id_utilisateur
 JOIN Voitures V ON L.id_voiture = V.id_voiture
 WHERE L.statut = 'annulee';"""
-    st.markdown("**SQL :**")
-    st.code(sql8, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_location,\ nom,\ prenom,\ marque,\ modele,\ date\_debut,\ date\_fin}(\sigma_{statut='annulee'}(Location) \bowtie_{id\_utilisateur} Utilisateurs \bowtie_{id\_voiture} Voitures)",
+    sql8,
+)
 
 df = executer_requete(sql8)
 if df is not None:
@@ -217,12 +200,7 @@ st.markdown("---")
 # ---- Requête 9 — DIVISION ----
 st.subheader("Requête 9 — ÷ Division : Utilisateurs ayant loué dans TOUTES les agences")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_utilisateur,\ id\_agence}(Location \bowtie_{id\_voiture} Voitures) \div \pi_{id\_agence}(Agences)")
-with col2:
-    sql9 = """SELECT U.nom, U.prenom
+sql9 = """SELECT U.nom, U.prenom
 FROM Utilisateurs U
 WHERE NOT EXISTS (
     SELECT A.id_agence FROM Agences A
@@ -233,8 +211,10 @@ WHERE NOT EXISTS (
         AND V.id_agence = A.id_agence
     )
 );"""
-    st.markdown("**SQL :**")
-    st.code(sql9, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_utilisateur,\ id\_agence}(Location \bowtie_{id\_voiture} Voitures) \div \pi_{id\_agence}(Agences)",
+    sql9,
+)
 
 st.info("La division en SQL se traduit par un double `NOT EXISTS`.")
 df = executer_requete(sql9)
@@ -246,12 +226,7 @@ st.markdown("---")
 # ---- Requête 10 — DIVISION ----
 st.subheader("Requête 10 — ÷ Division : Utilisateurs ayant loué TOUTES les catégories")
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Algèbre relationnelle :**")
-    st.latex(r"\pi_{id\_utilisateur,\ categorie}(Location \bowtie_{id\_voiture} Voitures) \div \pi_{categorie}(Voitures)")
-with col2:
-    sql10 = """SELECT U.nom, U.prenom
+sql10 = """SELECT U.nom, U.prenom
 FROM Utilisateurs U
 WHERE NOT EXISTS (
     SELECT DISTINCT V.categorie FROM Voitures V
@@ -263,8 +238,10 @@ WHERE NOT EXISTS (
         AND V2.categorie = V.categorie
     )
 );"""
-    st.markdown("**SQL :**")
-    st.code(sql10, language="sql")
+afficher_requete_relationnelle(
+    r"\pi_{id\_utilisateur,\ categorie}(Location \bowtie_{id\_voiture} Voitures) \div \pi_{categorie}(Voitures)",
+    sql10,
+)
 
 st.info("Cette division met en évidence les clients polyvalents ayant déjà loué chaque catégorie disponible.")
 df = executer_requete(sql10)
